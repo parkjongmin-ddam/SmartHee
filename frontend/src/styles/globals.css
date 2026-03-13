@@ -1,0 +1,82 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* ── Dark Theme (default) ── */
+  --bg-primary:    #0d0f0f;
+  --bg-secondary:  #141717;
+  --bg-surface:    #1a1e1e;
+  --bg-elevated:   #212727;
+  --border:        #2a3232;
+  --border-accent: #00e5a0;
+
+  --text-primary:  #e8eeec;
+  --text-secondary:#8a9e99;
+  --text-muted:    #4a5e59;
+  --text-accent:   #00e5a0;
+
+  --accent:        #00e5a0;
+  --accent-dim:    rgba(0, 229, 160, 0.12);
+  --accent-glow:   rgba(0, 229, 160, 0.25);
+  --danger:        #ff4d6d;
+  --warning:       #ffd166;
+  --success:       #00e5a0;
+
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.5);
+  --shadow-glow: 0 0 20px rgba(0, 229, 160, 0.15);
+
+  --font-ui:   'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --transition: 0.18s ease;
+}
+
+[data-theme='light'] {
+  --bg-primary:    #f4f6f5;
+  --bg-secondary:  #ffffff;
+  --bg-surface:    #ffffff;
+  --bg-elevated:   #f0f3f2;
+  --border:        #dde4e2;
+  --border-accent: #00916a;
+
+  --text-primary:  #0d1f1a;
+  --text-secondary:#4a6b62;
+  --text-muted:    #9ab5ae;
+  --text-accent:   #00916a;
+
+  --accent:        #00916a;
+  --accent-dim:    rgba(0, 145, 106, 0.08);
+  --accent-glow:   rgba(0, 145, 106, 0.15);
+  --danger:        #d63358;
+  --warning:       #c49a00;
+  --success:       #00916a;
+
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.1);
+  --shadow-glow: 0 0 20px rgba(0, 145, 106, 0.1);
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: var(--font-ui);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Utilities ── */
+.mono { font-family: var(--font-mono); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }

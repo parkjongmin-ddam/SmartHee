@@ -1,0 +1,81 @@
+flowchart TB
+    subgraph CLIENT["🖥️ Client Layer"]
+        UI["React UI\n대화형 빌더 / 대시보드"]
+        WS["WebSocket\n실시간 스트리밍"]
+    end
+
+    subgraph GATEWAY["⚡ API Gateway (FastAPI)"]
+        AUTH["JWT Auth\nMiddleware"]
+        REST["REST API\n/agents /builder /tools"]
+        WSHANDLER["WebSocket\nHandler"]
+    end
+
+    subgraph BUILDER["🔨 Builder Service"]
+        BA["Builder Agent\n(Meta Agent)\n자연어 → AgentConfig"]
+        PP["Prompt Parser\n의도 분석"]
+        TR["Tool Recommender\n도구 자동 선택"]
+    end
+
+    subgraph ORCHESTRATOR["🎯 LangGraph Orchestrator"]
+        SUP["Supervisor Agent\n태스크 분배 / 판단"]
+        W1["Worker Agent 1\nResearcher"]
+        W2["Worker Agent 2\nWriter"]
+        W3["Worker Agent N\n동적 생성"]
+        STATE["Shared State\nAgentState"]
+    end
+
+    subgraph TOOLS["🔧 Tool Registry (MCP 호환)"]
+        WEB["Web Search\n(Tavily/Serper)"]
+        PYEX["Python Executor\n(Sandbox)"]
+        SLACK["Slack MCP"]
+        NOTION["Notion MCP"]
+        CUSTOM["Custom Tools\nAPI 등록"]
+    end
+
+    subgraph INFRA["🗄️ Infrastructure"]
+        PG[("PostgreSQL\nAgentConfig / History")]
+        REDIS[("Redis\n캐시 / 세션 / Broker")]
+        LF["Langfuse\nTracing / Observability"]
+        CELERY["Celery Worker\n스케줄링 / 비동기"]
+    end
+
+    subgraph LLM["🤖 LLM Layer"]
+        OAI["OpenAI GPT-4o"]
+        CL["Anthropic Claude"]
+        OL["Ollama (로컬 LLM)"]
+        ROUTER["Model Router\n추상화 레이어"]
+    end
+
+    UI -->|HTTP| AUTH
+    UI -->|WS| WSHANDLER
+    AUTH --> REST
+    WSHANDLER --> WSHANDLER
+
+    REST -->|"POST /builder/create"| BA
+    BA --> PP --> TR
+    TR --> STATE
+    BA -->|AgentConfig 저장| PG
+
+    REST -->|"POST /agents/run"| SUP
+    SUP --> W1 & W2 & W3
+    W1 & W2 & W3 --> STATE
+    SUP -->|결과 스트리밍| WSHANDLER
+
+    W1 & W2 & W3 --> WEB & PYEX & SLACK & NOTION & CUSTOM
+
+    SUP & BA --> ROUTER
+    ROUTER --> OAI & CL & OL
+
+    SUP -->|trace| LF
+    BA -->|trace| LF
+    REST -->|캐시| REDIS
+    CELERY -->|스케줄 실행| SUP
+    CELERY --- REDIS
+
+    style CLIENT fill:#1e3a5f,color:#fff
+    style GATEWAY fill:#1a4a3a,color:#fff
+    style BUILDER fill:#4a2a5a,color:#fff
+    style ORCHESTRATOR fill:#5a3a1a,color:#fff
+    style TOOLS fill:#1a3a4a,color:#fff
+    style INFRA fill:#3a3a1a,color:#fff
+    style LLM fill:#2a1a4a,color:#fff
